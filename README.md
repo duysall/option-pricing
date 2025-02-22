@@ -1,4 +1,4 @@
-# Option-Pricing
+# Option Pricing
 
 ## Overview
 This repository contains Python implementations of various option pricing models commonly used in quantitative finance. The goal is to provide efficient and well-documented code for pricing derivatives using Monte Carlo simulations, the Black-Scholes model, and other techniques.
