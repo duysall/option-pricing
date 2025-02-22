@@ -32,7 +32,6 @@ def simulate_asset_paths(S0, T, r, sigma, n_simulations, n_steps):
     paths[0] = S0
     
     for t in range(1, n_steps + 1):
-        print("Step: ", t)
         Z = np.random.standard_normal(n_simulations)
         paths[t] = paths[t - 1] * np.exp((r - 0.5 * sigma**2) * dt + sigma * np.sqrt(dt) * Z)
     
@@ -59,20 +58,28 @@ print(f"Monte Carlo European Put Option Price: {put_price_mc:.2f}")
 print(f"Black-Scholes European Call Option Price: {call_price_bs:.2f}")
 print(f"Black-Scholes European Put Option Price: {put_price_bs:.2f}")
 
-# Plot a subset of simulated asset price paths
+# Plot mean and confidence interval of asset price distribution
+mean_prices = np.mean(paths, axis=1)
+std_prices = np.std(paths, axis=1)
+upper_bound = mean_prices + 1.96 * std_prices
+lower_bound = mean_prices - 1.96 * std_prices
+
 plt.figure(figsize=(10,5))
-plt.plot(paths[:, :10], lw=1.2, alpha=0.7)
-plt.title('Simulated Asset Price Paths')
+plt.plot(mean_prices, label='Mean Asset Price', color='b')
+plt.fill_between(range(n_steps + 1), lower_bound, upper_bound, color='b', alpha=0.2, label='95% Confidence Interval')
+plt.title('Mean Asset Price with Confidence Interval')
 plt.xlabel('Time Steps')
 plt.ylabel('Asset Price')
+plt.legend()
 plt.show()
 
 # Plot convergence of option price estimate
 plt.figure(figsize=(10,5))
-plt.plot(np.cumsum(call_payoff) / np.arange(1, n_simulations + 1), label='Call Price Convergence')
+plt.plot(np.cumsum(call_payoff) / np.arange(1, n_simulations + 1), label='Call Price Convergence', color='b')
 plt.axhline(call_price_mc, color='r', linestyle='dashed', label='Final Call Price')
 plt.title('Monte Carlo Call Option Price Convergence')
 plt.xlabel('Number of Simulations')
 plt.ylabel('Option Price')
+plt.xscale("log")  # Added log scale for x-axis
 plt.legend()
 plt.show()
